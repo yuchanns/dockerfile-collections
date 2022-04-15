@@ -1,2 +1,3 @@
-# neovim-images
-Dockerfile of neovim for the purpose of self-uses.
+# dockerfiles
+
+Collections of dockerfiles for personal usage purpose.
