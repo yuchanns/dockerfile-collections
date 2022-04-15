@@ -33,4 +33,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: ./nvim.protoc.Dockerfile
           context: .
-          build-args: NVIM_VERSION=${{ steps.tagName.outputs.nVersion }},PROTOC_VERSION=${{ steps.tagName.outputs.pVersion }}
+          build-args: |
+            NVIM_VERSION=${{ steps.tagName.outputs.nVersion }}
+            PROTOC_VERSION=${{ steps.tagName.outputs.pVersion }}

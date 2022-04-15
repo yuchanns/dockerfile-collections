@@ -2,19 +2,20 @@ FROM ubuntu:20.04 as protoc-builder
 
 ARG PROTOC_VERSION=3.5.1
 
-RUN apt update && apt install gcc g++ make autoconf aptitude libtool wget -y \
-&& wget https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protobuf-all-${PROTOC_VERSION}.tar.gz \
-&& tar -zxvf protobuf-all-${PROTOC_VERSION}.tar.gz && cd protobuf-${PROTOC_VERSION} \
-&& ./configure && make -j$(nproc) && make install && ldconfig && protoc --version 
+RUN apt update && apt install gcc g++ make autoconf aptitude libtool wget -y
+RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v$PROTOC_VERSION/protobuf-all-$PROTOC_VERSION.tar.gz
+RUN tar -zxvf protobuf-all-$PROTOC_VERSION.tar.gz
+RUN cd protobuf-$PROTOC_VERSION && ./configure && make -j$(nproc) && make install
+RUN ldconfig && protoc --version 
 
 FROM ubuntu:20.04 as nvim-builder
 
 ARG NVIM_VERSION=0.7.0
 
-RUN apt update && DEBIAN_FRONTEND=noninteractive apt install make cmake g++ pkg-config libtool libtool-bin gettext unzip wget ninja-build -y \
-&& wget https://github.com/neovim/neovim/archive/refs/tags/v${NVIM_VERSION}.tar.gz \
-&& tar -zxvf v${NVIM_VERSION}.tar.gz && cd neovim-${NVIM_VERSION} \
-&& make CMAKE_BUILD_TYPE=Release && make install
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install make cmake g++ pkg-config libtool libtool-bin gettext unzip wget ninja-build -y
+RUN wget https://github.com/neovim/neovim/archive/refs/tags/v$NVIM_VERSION.tar.gz
+RUN tar -zxvf v$NVIM_VERSION.tar.gz
+RUN cd neovim-$NVIM_VERSION && make CMAKE_BUILD_TYPE=Release && make install
 
 FROM ubuntu:20.04
 
