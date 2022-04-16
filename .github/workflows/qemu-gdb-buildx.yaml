@@ -1,0 +1,38 @@
+name: qemu-gdb-buildx
+on:
+  push:
+    tags:
+      - qemu-ubuntu*-gdb*
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          install: true
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Get Tag Name
+        uses: olegtarasov/get-tag@v2.1
+        id: tagName
+        with:
+          tagRegex: "qemu-ubuntu(?<uVersion>.*)-gdb(?<gVersion>.*)"
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: yuchanns/qemu-system-riscv64:ubuntu${{ steps.tagName.outputs.uVersion }}-gdb${{ steps.tagName.outputs.gVersion }}
+          platforms: linux/amd64,linux/arm64
+          file: ./riscv64.qemu.Dockerfile
+          context: .
+          build-args: |
+            UBUNTU_VERSION=${{ steps.tagName.outputs.uVersion }}
+            GDB_VERSION=${{ steps.tagName.outputs.gVersion }}
