@@ -2,7 +2,7 @@ name: nvim-protoc-buildx
 on:
   push:
     tags:
-      - nvim*-protoc*
+      - nvim*-ubuntu*-protoc*
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -24,15 +24,16 @@ jobs:
         uses: olegtarasov/get-tag@v2.1
         id: tagName
         with:
-          tagRegex: "nvim(?<nVersion>.*)-protoc(?<pVersion>.*)"
+          tagRegex: "nvim(?<nVersion>.*)-ubuntu(?<uVersion>.*)-protoc(?<pVersion>.*)"
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: yuchanns/nvim:${{ steps.tagName.outputs.nVersion }}-protoc${{ steps.tagName.outputs.pVersion }}
+          tags: yuchanns/nvim:${{ steps.tagName.outputs.nVersion }}-ubuntu${{ steps.tagName.outputs.uVersion }}-protoc${{ steps.tagName.outputs.pVersion }}
           platforms: linux/amd64,linux/arm64
           file: ./nvim.protoc.Dockerfile
           context: .
           build-args: |
             NVIM_VERSION=${{ steps.tagName.outputs.nVersion }}
             PROTOC_VERSION=${{ steps.tagName.outputs.pVersion }}
+            UBUNTU_VERSION=${{ steps.tagName.outputs.uVersion }}

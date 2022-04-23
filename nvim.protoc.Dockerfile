@@ -1,4 +1,6 @@
-FROM ubuntu:20.04 as protoc-builder
+ARG UBUNTU_VERSION=22.04
+
+FROM ubuntu:$UBUNTU_VERSION as protoc-builder
 
 ARG PROTOC_VERSION=3.5.1
 
@@ -8,7 +10,9 @@ RUN tar -zxvf protobuf-all-$PROTOC_VERSION.tar.gz
 RUN cd protobuf-$PROTOC_VERSION && ./configure && make -j$(nproc) && make install
 RUN ldconfig && protoc --version 
 
-FROM ubuntu:20.04 as nvim-builder
+ARG UBUNTU_VERSION=22.04
+
+FROM ubuntu:$UBUNTU_VERSION as nvim-builder
 
 ARG NVIM_VERSION=0.7.0
 
@@ -17,7 +21,9 @@ RUN wget https://github.com/neovim/neovim/archive/refs/tags/v$NVIM_VERSION.tar.g
 RUN tar -zxvf v$NVIM_VERSION.tar.gz
 RUN cd neovim-$NVIM_VERSION && make CMAKE_BUILD_TYPE=Release && make install
 
-FROM ubuntu:20.04
+ARG UBUNTU_VERSION=22.04
+
+FROM ubuntu:$UBUNTU_VERSION
 
 COPY --from=protoc-builder /usr/local/lib /usr/local/lib
 COPY --from=protoc-builder /usr/local/bin/protoc /usr/local/bin/
